@@ -16,6 +16,13 @@ class Subscription extends Model
     'billing_cycle',
     'next_renewal_date',
     'notification_email',
+    'user_id', 
+
 ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }

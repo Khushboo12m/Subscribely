@@ -1,0 +1,17 @@
+Every minute, Laravel’s scheduler checks if there’s any job that’s due.
+
+When the time matches (once a day in our case), it runs your command:
+That command finds subscriptions due in 3 days and sends reminders.
+
+# php artisan make:command SendSubscriptionReminders
+
+
+Try this command manually (it simulates the scheduler):
+# php artisan schedule:run
+
+
+composer require laravel/sanctum
+
+
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+php artisan migrate

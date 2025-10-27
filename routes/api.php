@@ -1,34 +1,36 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\API\AuthController;
-
-
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
+| All routes here are prefixed with /api automatically.
+| Example: /api/register, /api/login, /api/subscriptions
+|--------------------------------------------------------------------------
 */
 
-
-Route::apiResource('subscriptions', SubscriptionController::class);
-
-
-
-// Public routes
+//  Public routes (no auth required)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Protected routes
-Route::middleware('auth:sanctum')->group(function() {
+//  Protected routes (requires valid Sanctum token)
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Authentication actions
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
+
+    // Subscription management (CRUD)
+    Route::apiResource('/subscriptions', SubscriptionController::class);
+
+    // Dashboard APIs
+    Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
+    Route::get('/dashboard/upcoming', [DashboardController::class, 'upcomingRenewals']);
+    Route::get('/dashboard/monthly', [DashboardController::class, 'monthlyTotals']);
+
 });

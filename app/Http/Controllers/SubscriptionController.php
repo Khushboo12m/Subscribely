@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Subscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class SubscriptionController extends Controller
 {
@@ -13,8 +16,12 @@ class SubscriptionController extends Controller
    // List all subscriptions
     public function index()
     {
-        $subscriptions = Subscription::all();
-        return response()->json($subscriptions);
+        $subscriptions = Subscription::where('user_id', Auth::id())->get();
+
+        return response()->json([
+            'status' => true,
+            'subscriptions' => $subscriptions
+        ]);
     }
 
     /**
@@ -40,8 +47,15 @@ class SubscriptionController extends Controller
             'notification_email' => 'nullable|email',
         ]);
 
+        $validated['user_id'] = Auth::id(); 
+
         $subscription = Subscription::create($validated);
-        return response()->json(['message' => 'Subscription added successfully', 'data' => $subscription]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Subscription added successfully',
+            'data' => $subscription
+        ]);
     }
 
     /**
@@ -50,11 +64,13 @@ class SubscriptionController extends Controller
     // View a single subscription
     public function show($id)
     {
-        $subscription = Subscription::find($id);
+        $subscription = Subscription::where('user_id', Auth::id())->find($id);
+
         if (!$subscription) {
-            return response()->json(['message' => 'Subscription not found'], 404);
+            return response()->json(['status' => false, 'message' => 'Subscription not found'], 404);
         }
-        return response()->json($subscription);
+
+        return response()->json(['status' => true, 'subscription' => $subscription]);
     }
 
     /**
@@ -71,13 +87,19 @@ class SubscriptionController extends Controller
     // Update a subscription
     public function update(Request $request, $id)
     {
-        $subscription = Subscription::find($id);
+        $subscription = Subscription::where('user_id', Auth::id())->find($id);
+
         if (!$subscription) {
-            return response()->json(['message' => 'Subscription not found'], 404);
+            return response()->json(['status' => false, 'message' => 'Subscription not found'], 404);
         }
 
         $subscription->update($request->all());
-        return response()->json(['message' => 'Subscription updated successfully', 'data' => $subscription]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Subscription updated successfully',
+            'data' => $subscription
+        ]);
     }
 
 
@@ -87,12 +109,14 @@ class SubscriptionController extends Controller
    // Delete a subscription
     public function destroy($id)
     {
-        $subscription = Subscription::find($id);
+        $subscription = Subscription::where('user_id', Auth::id())->find($id);
+
         if (!$subscription) {
-            return response()->json(['message' => 'Subscription not found'], 404);
+            return response()->json(['status' => false, 'message' => 'Subscription not found'], 404);
         }
 
         $subscription->delete();
-        return response()->json(['message' => 'Subscription deleted successfully']);
+
+        return response()->json(['status' => true, 'message' => 'Subscription deleted successfully']);
     }
 }
