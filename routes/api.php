@@ -25,6 +25,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
 
+    Route::post('/update-profile', [AuthController::class, 'updateProfile']);
+
+
     // Subscription management (CRUD)
     Route::apiResource('/subscriptions', SubscriptionController::class);
 
