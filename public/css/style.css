@@ -1,0 +1,31 @@
+/* Background */
+.auth-bg {
+    background: linear-gradient(130deg, #4c6ef5, #d6336c);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Card Styling */
+.auth-card {
+    width: 420px;
+    border-radius: 16px;
+    animation: fadeIn 0.8s ease-in-out;
+    background: #fff;
+}
+
+/* Primary Theme Colors */
+.primary-text {
+    color: #4c6ef5;
+}
+
+.accent-text {
+    color: #d6336c;
+}
+.accent-text:hover {
+    color: #a61e4d;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

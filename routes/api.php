@@ -17,8 +17,9 @@ use App\Http\Controllers\API\ForgotPasswordController;
 */
 
 //  Public routes (no auth required)
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+// routes/api.php
+Route::post('/register', [AuthController::class, 'register'])->name('api.register');
+Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 
 // Forgot Password routes
 Route::post('/forgot-password', [ForgotPasswordController::class, 'forgotPassword']);
