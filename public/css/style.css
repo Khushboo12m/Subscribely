@@ -41,7 +41,7 @@ html, body, .btn, label, .form-label, .card, .card-header, .card-title, .card-bo
 .card .card-header { border-bottom: 1px solid rgba(255,255,255,0.35); background: transparent; }
 
 /* Sidebar App Shell */
-.app-shell { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 45%, #f43f5e 100%); }
+.app-shell { display: grid;  min-height: 100vh; background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 45%, #f43f5e 100%); }
 .app-sidebar { background: rgba(255,255,255,0.15); border-right: 1px solid rgba(255,255,255,0.15); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; backdrop-filter: blur(14px); }
 .app-main { display: flex; flex-direction: column; min-width: 0; width: 100%; }
 .app-topbar { height: 56px; background: rgba(255,255,255,0.15); border-bottom: 1px solid rgba(255,255,255,0.15); padding: 0 1rem; backdrop-filter: blur(10px); }
@@ -55,6 +55,9 @@ html, body, .btn, label, .form-label, .card, .card-header, .card-title, .card-bo
 @media (min-width: 1200px) and (max-width: 1399.98px) { .app-content { max-width: 1140px; } }
 @media (min-width: 992px) and (max-width: 1199.98px) { .app-content { max-width: 960px; } }
 
+@media (min-width: 1400px) { .app-shell { display: grid; grid-template-columns: 260px 1fr;}}
+
+@media (min-width: 1024px) { .app-shell { display: grid; grid-template-columns: 260px 1fr;}}
 
 
 @media (max-width: 991.98px) {
