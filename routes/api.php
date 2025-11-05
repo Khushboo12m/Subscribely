@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\API\SubscriptionController;
+use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\ForgotPasswordController;
 
 
