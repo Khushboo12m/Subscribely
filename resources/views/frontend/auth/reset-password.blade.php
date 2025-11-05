@@ -17,6 +17,12 @@
             <div class="card-body p-4">
                 <h3 class="text-center fw-bold mb-3 primary-text">Reset Password</h3>
                 <form id="resetForm">
+
+                    <div class="mb-3">
+                        <label class="form-label">OTP</label>
+                        <input type="text" id="otp" class="form-control" placeholder="Enter OTP" required>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">New Password</label>
                         <input type="password" id="password" class="form-control" placeholder="Enter new password" required>
@@ -27,7 +33,9 @@
                     </div>
                     <button type="submit" class="btn btn-primary w-100 rounded-pill">Reset Password</button>
                 </form>
-                <p class="text-center mt-3"><a href="/login" class="accent-text">Back to Login</a></p>
+                <p class="text-center mt-3">
+                    <a href="/login" class="accent-text">Back to Login</a>
+                </p>
             </div>
         </div>
     </div>
@@ -36,15 +44,29 @@
 document.getElementById('resetForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const email = localStorage.getItem('fp_email');
+    const otp = document.getElementById('otp').value;
     const password = document.getElementById('password').value;
     const password_confirmation = document.getElementById('password_confirmation').value;
     if (!email) {
-        return Swal.fire({ icon: 'error', title: 'Missing email', text: 'Start again.' }).then(() => window.location.href = '/forgot-password');
+        return Swal.fire({
+            icon: 'error',
+            title: 'Session Expired',
+            text: 'Start reset process again.'
+        }).then(() => window.location.href = '/forgot-password');
     }
-    const res = await API.request('/reset-password', 'POST', { email, password, password_confirmation }, false);
+
+    const res = await API.request('/reset-password', 'POST', {
+        email, otp, password, password_confirmation
+    }, false);
     if (res.success) {
         localStorage.removeItem('fp_email');
-        Swal.fire({ icon: 'success', title: 'Password reset', text: 'Please login', timer: 1500, showConfirmButton: false });
+        Swal.fire({
+            icon: 'success',
+            title: 'Password Updated',
+            text: 'Redirecting to login...',
+            timer: 1500,
+            showConfirmButton: false
+        });
         setTimeout(() => { window.location.href = '/login'; }, 1500);
     } else {
         let msg = res.data?.message || 'Reset failed';
@@ -56,5 +78,3 @@ document.getElementById('resetForm').addEventListener('submit', async function(e
 
 </body>
 </html>
-
-
