@@ -34,7 +34,7 @@ Route::controller(AuthController::class)->group(function () {
 // Protected routes - authentication handled in JavaScript
 // Note: These routes don't use auth:sanctum middleware because tokens are stored in localStorage
 // Each Blade view should check authentication in JavaScript before loading data
-Route::get('/dashboard', [DashboardController::class, 'index']);
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/subscriptions', [SubscriptionController::class, 'index']);
 Route::get('/profile', [ProfileController::class, 'index']);
 

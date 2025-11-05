@@ -153,6 +153,34 @@ const API = {
             data.password = password;
         }
         return await this.request('/update-profile', 'POST', data, true);
+    },
+
+    // Dashboard endpoints
+    async getDashboardSummary() {
+        return await this.request('/dashboard/summary', 'GET', null, true);
+    },
+    async getUpcomingRenewals() {
+        return await this.request('/dashboard/upcoming', 'GET', null, true);
+    },
+    async getMonthlyTotals() {
+        return await this.request('/dashboard/monthly', 'GET', null, true);
+    },
+
+    // Subscriptions CRUD
+    async listSubscriptions() {
+        return await this.request('/subscriptions', 'GET', null, true);
+    },
+    async getSubscription(id) {
+        return await this.request(`/subscriptions/${id}`, 'GET', null, true);
+    },
+    async createSubscription(payload) {
+        return await this.request('/subscriptions', 'POST', payload, true);
+    },
+    async updateSubscription(id, payload) {
+        return await this.request(`/subscriptions/${id}`, 'PUT', payload, true);
+    },
+    async deleteSubscription(id) {
+        return await this.request(`/subscriptions/${id}`, 'DELETE', null, true);
     }
 };
 

@@ -15,10 +15,14 @@
 <body class="auth-bg">
 
     <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="card auth-card shadow-lg border-0">
+        <div class="card auth-card shadow-soft border-0" style="max-width:480px;">
             <div class="card-body p-4">
 
-                <h3 class="text-center fw-bold mb-4 primary-text">Welcome Back 👋</h3>
+                <div class="text-center mb-3">
+                    <div class="fw-bold fs-4 primary-text">Subscribely</div>
+                </div>
+                <h3 class="text-center fw-bold mb-2" style="color:#0f172a">Welcome Back 👋</h3>
+                <p class="text-center text-muted mb-4">Sign in to manage your subscriptions</p>
 
                 <form id="loginForm">
 
@@ -49,10 +53,13 @@
     </div>
 
 <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- SweetAlert -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- API Helper -->
+<script src="/js/api.js"></script>
 
 <script>
 document.getElementById("loginForm").addEventListener("submit", async function(e) {
@@ -68,55 +75,18 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     const password = document.getElementById("password").value;
 
     try {
-        const response = await fetch("{{ route('api.login') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.access_token) {
-            // Store token in localStorage
-            localStorage.setItem("token", data.access_token);
-            localStorage.setItem("token_type", data.token_type || "Bearer");
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Login Successful!',
-                text: 'Redirecting to Dashboard...',
-                timer: 1500,
-                showConfirmButton: false
-            });
-
-            setTimeout(() => {
-                window.location.href = "/dashboard";
-            }, 1500);
-
+        const response = await API.login(email, password);
+        const data = response.data || {};
+        if (response.success && (data.access_token || data.token)) {
+            const token = data.access_token || data.token;
+            localStorage.setItem('token', token);
+            localStorage.setItem('token_type', data.token_type || 'Bearer');
+            Swal.fire({ icon: 'success', title: 'Login Successful!', text: 'Redirecting...', timer: 1200, showConfirmButton: false });
+            setTimeout(() => { window.location.href = '/dashboard'; }, 1200);
         } else {
-            // Handle validation errors
-            let errorMessage = "Login failed!";
-            
-            if (data.errors) {
-                // Laravel validation errors
-                const errorMessages = Object.values(data.errors).flat();
-                errorMessage = errorMessages.join('<br>');
-            } else if (data.message) {
-                errorMessage = data.message;
-            }
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Login Failed',
-                html: errorMessage,
-            });
+            let errorMessage = data?.message || 'Login failed!';
+            if (data?.errors) errorMessage = Object.values(data.errors).flat().join('<br>');
+            Swal.fire({ icon: 'error', title: 'Login Failed', html: errorMessage });
         }
     } catch (error) {
         Swal.fire({

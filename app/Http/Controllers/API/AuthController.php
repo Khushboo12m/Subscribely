@@ -68,9 +68,14 @@ class AuthController extends Controller
     }
 
     // Profile
-    public function profile(Request $request)
+        public function profile(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json([
+            "success" => true,
+            "data" => [
+                "user" => $request->user()
+            ]
+        ]);
     }
 
         public function updateProfile(Request $request)
