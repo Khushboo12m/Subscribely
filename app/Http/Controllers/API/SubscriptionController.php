@@ -86,15 +86,23 @@ class SubscriptionController extends Controller
      * Update the specified resource in storage.
      */
     // Update a subscription
-    public function update(Request $request, $id)
+        public function update(Request $request, $id)
     {
         $subscription = Subscription::where('user_id', Auth::id())->find($id);
 
         if (!$subscription) {
-            return response()->json(['status' => false, 'message' => 'Subscription not found'], 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Subscription not found'
+            ], 404);
         }
 
-        $subscription->update($request->all());
+        $subscription->update([
+            'service_name' => $request->service_name,
+            'amount' => $request->amount,
+            'billing_cycle' => $request->billing_cycle,
+            'next_renewal_date' => $request->next_renewal_date,
+        ]);
 
         return response()->json([
             'status' => true,
