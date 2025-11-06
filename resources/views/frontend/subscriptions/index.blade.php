@@ -3,6 +3,21 @@
 @section('content')
 <div class="container py-4">
 
+    <!-- ✅ Search + Filter Row -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search service...">
+        </div>
+        <div class="col-md-3">
+            <select id="filterCategory" class="form-select">
+                <option value="">All Categories</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-secondary w-100" id="filterBtn">Filter</button>
+        </div>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="fw-semibold mb-0">Subscriptions</h4>
         <button class="btn btn-primary btn-sm" id="addBtn">➕ Add Subscription</button>
@@ -89,26 +104,32 @@ document.addEventListener("DOMContentLoaded", function () {
     const modalTitle = document.getElementById("modalTitle");
     const form = document.getElementById("subscriptionForm");
 
-    async function loadSubscriptions() {
-        body.innerHTML = `<tr><td colspan="5" class="text-center">Loading...</td></tr>`;
+    async function loadSubscriptions(page = 1) {
+        const search = document.getElementById("searchInput").value;
+        const category = document.getElementById("filterCategory").value;
 
-        const res = await API.listSubscriptions();
-        const items = res.data?.subscriptions || [];
+        body.innerHTML = `<tr><td colspan="6" class="text-center">Loading...</td></tr>`;
 
-        if (!res.success) {
-            body.innerHTML = `<tr><td colspan="5" class="text-danger text-center">Failed to load</td></tr>`;
-            return;
-        }
+        const res = await API.listSubscriptions({ page, search, category });
 
-        if (items.length === 0) {
-            body.innerHTML = `<tr><td colspan="5" class="text-muted text-center">No subscriptions found</td></tr>`;
-            return;
-        }
+    if (!res.status) {
+        body.innerHTML = `<tr><td colspan="6" class="text-danger text-center">Failed to load</td></tr>`;
+        return;
+    }
 
-        body.innerHTML = "";
-        items.forEach(item => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
+    const items = res.data?.data?.data || [];
+
+    console.log(items);
+
+    if (items.length === 0) {
+        body.innerHTML = `<tr><td colspan="6" class="text-muted text-center">No matching results</td></tr>`;
+        return;
+    }
+
+    body.innerHTML = "";
+    items.forEach(item => {
+        body.innerHTML += `
+            <tr>
                 <td>${item.service_name}</td>
                 <td>${item.category ?? '-'}</td>
                 <td>${item.amount}</td>
@@ -118,10 +139,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     <button class="btn btn-sm btn-outline-primary me-2" data-action="edit" data-id="${item.id}">Edit</button>
                     <button class="btn btn-sm btn-outline-danger" data-action="delete" data-id="${item.id}">Delete</button>
                 </td>
-            `;
-            body.appendChild(tr);
-        });
-    }
+            </tr>
+        `;
+    });
+}
 
     loadSubscriptions();
 
@@ -217,6 +238,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     loadCategories();
+
+        async function loadFilterCategories() {
+        const res = await API.getCategories();
+        const select = document.getElementById("filterCategory");
+
+        res.data.categories.forEach(cat => {
+            select.innerHTML += `<option value="${cat}">${cat}</option>`;
+        });
+    }
+
+    loadFilterCategories();
+
+    document.getElementById("filterBtn").addEventListener("click", () => {
+    loadSubscriptions();
+});
+
 
 
 });

@@ -167,8 +167,9 @@ const API = {
     },
 
     // Subscriptions CRUD
-    async listSubscriptions() {
-        return await this.request('/subscriptions', 'GET', null, true);
+    async listSubscriptions(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    return await this.request(`/subscriptions?${query}`, 'GET', null, true);
     },
     async getSubscription(id) {
         return await this.request(`/subscriptions/${id}`, 'GET', null, true);

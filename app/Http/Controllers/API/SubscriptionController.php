@@ -15,13 +15,33 @@ class SubscriptionController extends Controller
      * Display a listing of the resource.
      */
    // List all subscriptions
-    public function index()
+        public function index(Request $request)
     {
-        $subscriptions = Subscription::where('user_id', Auth::id())->get();
+        $query = Subscription::where('user_id', Auth::id());
+
+        // Search by service name
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('service_name', 'LIKE', '%' . $request->search . '%');
+        }
+
+        // Filter by category
+        if ($request->has('category') && !empty($request->category)) {
+            $query->where('category', $request->category);
+        }
+
+        // Optional: filter by billing cycle
+        if ($request->has('billing_cycle') && !empty($request->billing_cycle)) {
+            $query->where('billing_cycle', $request->billing_cycle);
+        }
+
+        // Optional: sort by upcoming renewal date
+        if ($request->sort == 'next_renewal') {
+            $query->orderBy('next_renewal_date', 'asc');
+        }
 
         return response()->json([
             'status' => true,
-            'subscriptions' => $subscriptions
+            'data' => $query->latest()->paginate(10)
         ]);
     }
 
