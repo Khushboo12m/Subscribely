@@ -42,6 +42,16 @@
             </tbody>
         </table>
     </div>
+
+    <!-- ✅ Pagination Controls -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <button class="btn btn-outline-secondary btn-sm" id="prevBtn" disabled>Prev</button>
+
+        <span id="paginationNumbers"></span>
+
+        <button class="btn btn-outline-secondary btn-sm" id="nextBtn" disabled>Next</button>
+    </div>
+
 </div>
 
 <!-- Add/Edit Modal -->
@@ -100,6 +110,9 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     const body = document.getElementById("subscriptionBody");
+    let currentPage = 1;
+    let totalPages = 1;
+
     const modal = new bootstrap.Modal(document.getElementById("subscriptionModal"));
     const modalTitle = document.getElementById("modalTitle");
     const form = document.getElementById("subscriptionForm");
@@ -118,8 +131,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const items = res.data?.data?.data || [];
+    totalPages = res.data?.data?.last_page || 1;
+    currentPage = res.data?.data?.current_page || 1;
 
-    console.log(items);
 
     if (items.length === 0) {
         body.innerHTML = `<tr><td colspan="6" class="text-muted text-center">No matching results</td></tr>`;
@@ -142,9 +156,45 @@ document.addEventListener("DOMContentLoaded", function () {
             </tr>
         `;
     });
+
+    updatePaginationUI();
+
 }
 
-    loadSubscriptions();
+    window.loadSubscriptions = loadSubscriptions;
+
+
+    currentPage = 1;
+    loadSubscriptions(1);
+
+        function updatePaginationUI() {
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const pages = document.getElementById("paginationNumbers");
+
+        prevBtn.disabled = currentPage <= 1;
+        nextBtn.disabled = currentPage >= totalPages;
+
+        pages.innerHTML = "";
+        for (let i = 1; i <= totalPages; i++) {
+            pages.innerHTML += `
+                <button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light'} mx-1"
+                    onclick="loadSubscriptions(${i})">
+                    ${i}
+                </button>`;
+        }
+    }
+
+
+    document.getElementById("prevBtn").addEventListener("click", () => {
+        if (currentPage > 1) loadSubscriptions(currentPage - 1);
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+        if (currentPage < totalPages) loadSubscriptions(currentPage + 1);
+    });
+
+
 
     // Add New
     document.getElementById("addBtn").addEventListener("click", () => {
@@ -251,10 +301,8 @@ document.addEventListener("DOMContentLoaded", function () {
     loadFilterCategories();
 
     document.getElementById("filterBtn").addEventListener("click", () => {
-    loadSubscriptions();
-});
-
-
+    currentPage = 1;   
+    loadSubscriptions(1);});
 
 });
 </script>
