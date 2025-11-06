@@ -70,6 +70,8 @@
                                 <th>Name</th>
                                 <th>Price</th>
                                 <th>Renewal Date</th>
+                                <th>Category</th>
+
                             </tr>
                         </thead>
                         <tbody id="upcomingTableBody">
@@ -126,7 +128,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             const items = Array.isArray(upcoming.data) ? upcoming.data : (upcoming.data?.upcoming_renewals || []);
             document.getElementById('statUpcoming').innerText = items.length ?? '-';
             if (items.length === 0) {
-                body.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">No upcoming renewals</td></tr>';
+                body.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No upcoming renewals</td></tr>';
             } else {
                 items.forEach(item => {
                     const tr = document.createElement('tr');
@@ -134,7 +136,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                         <td>${item.name ?? item.service_name ?? '-'}</td>
                         <td>${item.price ?? item.amount ?? '-'}</td>
                         <td>${item.renewal_date ?? item.next_renewal_date ?? '-'}</td>
-                    `;
+                        <td>${item.category ?? item.category ?? '-'}</td>
+                        `;
                     body.appendChild(tr);
                 });
             }

@@ -13,6 +13,7 @@
             <thead class="table-light">
                 <tr>
                     <th>Service</th>
+                    <th>Category</th>
                     <th>Amount</th>
                     <th>Billing Cycle</th>
                     <th>Next Renewal</th>
@@ -21,7 +22,7 @@
             </thead>
             <tbody id="subscriptionBody">
                 <tr>
-                    <td colspan="5" class="text-center py-4">Loading...</td>
+                    <td colspan="6" class="text-center py-4">Loading...</td>
                 </tr>
             </tbody>
         </table>
@@ -45,6 +46,14 @@
                         <label class="form-label">Service Name</label>
                         <input type="text" id="service_name" class="form-control" required>
                     </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select id="category" class="form-select" required>
+                            <option value="" disabled selected>Select Category</option>
+                        </select>
+                    </div>
+                  
 
                     <div class="mb-3">
                         <label class="form-label">Amount</label>
@@ -101,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td>${item.service_name}</td>
+                <td>${item.category ?? '-'}</td>
                 <td>${item.amount}</td>
                 <td>${item.billing_cycle}</td>
                 <td>${item.next_renewal_date}</td>
@@ -138,6 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const s = res.data.subscription;
                 document.getElementById("subId").value = s.id;
                 document.getElementById("service_name").value = s.service_name;
+                document.getElementById("category").value = s.category;
                 document.getElementById("amount").value = s.amount;
                 document.getElementById("billing_cycle").value = s.billing_cycle;
                 document.getElementById("next_renewal_date").value = s.next_renewal_date;
@@ -175,6 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const payload = {
             service_name: document.getElementById("service_name").value,
+            category: document.getElementById("category").value, 
             amount: document.getElementById("amount").value,
             billing_cycle: document.getElementById("billing_cycle").value,
             next_renewal_date: document.getElementById("next_renewal_date").value,
@@ -193,6 +205,19 @@ document.addEventListener("DOMContentLoaded", function () {
             Swal.fire("Error", "Failed to save", "error");
         }
     });
+
+        async function loadCategories() {
+        const res = await API.getCategories();
+        const select = document.getElementById("category");
+
+        select.innerHTML = `<option disabled selected>Select Category</option>`;
+        res.data.categories.forEach(cat => {
+            select.innerHTML += `<option value="${cat}">${cat}</option>`;
+        });
+    }
+
+    loadCategories();
+
 
 });
 </script>

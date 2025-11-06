@@ -181,6 +181,10 @@ const API = {
     },
     async deleteSubscription(id) {
         return await this.request(`/subscriptions/${id}`, 'DELETE', null, true);
+    },
+
+    async getCategories() {
+    return await this.request('/subscription-categories', 'GET', null, true);
     }
 };
 

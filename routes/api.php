@@ -34,6 +34,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/update-profile', [AuthController::class, 'updateProfile']);
 
+      // Get fixed subscription categories
+    Route::get('/subscription-categories', function () {
+        return response()->json([
+            'status' => true,
+            'categories' => \App\Models\Subscription::categories(),
+        ]);
+    });
+
 
     // Subscription management (CRUD)
     Route::apiResource('/subscriptions', SubscriptionController::class);

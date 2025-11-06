@@ -25,4 +25,9 @@ class Subscription extends Model
         return $this->belongsTo(User::class);
     }
 
+        public static function categories()
+    {
+        return config('subscribely.categories', []);
+    }
+
 }

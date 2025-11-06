@@ -41,7 +41,7 @@ class SubscriptionController extends Controller
     {
         $validated = $request->validate([
             'service_name' => 'required|string|max:255',
-            'category' => 'nullable|string|max:255',
+            'category' => 'nullable|string|in:' . implode(',', Subscription::categories()),
             'amount' => 'nullable|numeric',
             'billing_cycle' => 'required|string',
             'next_renewal_date' => 'required|date',
@@ -97,12 +97,18 @@ class SubscriptionController extends Controller
             ], 404);
         }
 
-        $subscription->update([
-            'service_name' => $request->service_name,
-            'amount' => $request->amount,
-            'billing_cycle' => $request->billing_cycle,
-            'next_renewal_date' => $request->next_renewal_date,
-        ]);
+                // Validate input (including category from allowed list)
+            $validated = $request->validate([
+                'service_name' => 'required|string|max:255',
+                'category' => 'nullable|string|in:' . implode(',', Subscription::categories()),
+                'amount' => 'nullable|numeric',
+                'billing_cycle' => 'required|string',
+                'next_renewal_date' => 'required|date',
+                'notification_email' => 'nullable|email',
+            ]);
+
+            // Update subscription with validated data
+            $subscription->update($validated);
 
         return response()->json([
             'status' => true,
